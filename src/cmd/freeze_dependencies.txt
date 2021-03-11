@@ -1,0 +1,1 @@
+npm ls | grep -E "^(├|└)─" | cut -d" " -f2 | awk -v quote='"' 'BEGIN { FS = "@" } ; { print quote $1 quote,":",quote $2 quote"," }' | sed -e 's/ :/:/g'

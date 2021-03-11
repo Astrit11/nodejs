@@ -1,0 +1,7 @@
+node_modules
+.env
+access.log
+package-lock.json
+env
+db_volume
+.vscode

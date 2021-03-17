@@ -6,7 +6,6 @@ import fs from 'fs';
 import path from 'path';
 import routes from './routes';
 import { isAuthenticated } from './utils/isAuthenticated';
-
 const app = express();
 
 const accessLogStream = fs.createWriteStream(
@@ -26,5 +25,5 @@ app.use((req, res) => {
 });
 
 app.listen(4000, () => {
-  console.log(`Example app listening on port 4002!`);
+  console.log(`Example app listening on port 4000!`);
 });

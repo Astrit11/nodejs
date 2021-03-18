@@ -6,8 +6,9 @@ import fs from 'fs';
 import path from 'path';
 import routes from './routes';
 import { isAuthenticated } from './utils/isAuthenticated';
-
 const app = express();
+require("dotenv").config()
+require("./auth/passport");
 
 const accessLogStream = fs.createWriteStream(
   path.join(__dirname, '../access.log'),
@@ -26,5 +27,5 @@ app.use((req, res) => {
 });
 
 app.listen(4000, () => {
-  console.log(`Example app listening on port 4002!`);
+  console.log(`Example app listening on port 4000!`);
 });

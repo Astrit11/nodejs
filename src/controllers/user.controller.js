@@ -1,5 +1,54 @@
 const db = require('../models');
 const User = db.rest.models.user;
+const jwt = require("jsonwebtoken")
+
+//API to test  the passport middleware 
+exports.TestPassport = async (req,res)=>{
+  res.json("you have 2800 in you're account")
+}
+
+exports.LoginUser = async (req,res)=>{
+  const {username,password} = req.body;
+  const UserwithUsername = await User.findOne({where:{username,}}).catch((err)=>{
+    return res.status(400).send({
+      message: "Something went wrong",
+      error:err
+    });
+  });
+  if(!UserwithUsername)
+    return res.status(400).send({
+    
+    message: 'Invalid username',
+  });
+  //First method to query a password from db 
+
+  // const UserwithPasssword = await User.findOne({where:{password,}}).catch((err)=>{
+  //   return res.status(400).send({
+  //     message: err,
+  //   });
+  // });
+  // if(!UserwithPasssword)
+  //   return res.status(400).send({
+  //   message: 'Invalid password',
+  // });
+
+  //Or we can lookup the password from that specific email that we found in the UserwithUsername
+  if(UserwithUsername.password !== password)
+    return res.status(400).send({
+      message:"Invalid password "
+    })
+  const jwtToken = jwt.sign({
+    id:UserwithUsername.id,
+    username:UserwithUsername.username
+  },process.env.JWT_SECRET);
+  
+  return res.status(200).send({
+    message:'Succesfully logged in ',
+    token:jwtToken
+  });
+};  
+
+
 
 
 exports.getAllUsers = async (req,res)=>{
@@ -29,7 +78,7 @@ exports.getUser = async (req, res) => {
   return res.send(user);
 };
 
-exports.createUser = async (req, res) => {
+exports.registerUser = async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
     return res.status(400).send({
@@ -48,13 +97,24 @@ exports.createUser = async (req, res) => {
       message: 'An account with that username already exists!',
     });
   }
-
+  
   try {
-    let newUser = await User.create({
+    const jwtToken = jwt.sign({
+      id:User.id,
+      username:User.username
+    },process.env.JWT_SECRET);
+
+    let newUser = await User.create({ 
       username,
       password,
+      jwtToken,
     });
-    return res.send(newUser);
+    return res.send({newUser,jwtToken});
+    return res.status(200).send({
+      message: 'Succesfully registered user!',
+      data:newUser,
+      token:jwtToken
+    });
   } catch (err) {
     return res.status(500).send({
       message: `Error: ${err.message}`,

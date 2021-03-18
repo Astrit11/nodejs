@@ -7,6 +7,8 @@ import path from 'path';
 import routes from './routes';
 import { isAuthenticated } from './utils/isAuthenticated';
 const app = express();
+require("dotenv").config()
+require("./auth/passport");
 
 const accessLogStream = fs.createWriteStream(
   path.join(__dirname, '../access.log'),
